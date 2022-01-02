@@ -3,7 +3,10 @@
 usage() {
 # `cat << EOF` This means that cat should stop reading when EOF is detected
 cat << EOF  
-Usage: ./mkbastion -g myvm-resource-gp
+Usage: ./mkbastion.sh --resource-group mkvm-resource-gp --name myBastionHost
+		--vnet myVNet --subnet-name azureBastionSubnet
+		--subnet-prefix 10.1.1.0/24 --public-ip-name myBastionIP
+		--location ukwest 
 Install Pre-requisites for EspoCRM with docker in Development mode
 -g|--resource-group		The azure resource group
 --vnet-name				The vNet to which the Bastion is to be connected.
@@ -127,5 +130,5 @@ echo "Creating Bastion $name connecting to vNet $vnet in $location";
 az network bastion create --resource-group $group --name $name --public-ip-address $publicIP --vnet-name $vnet --location $location
 
 bastionIP=$(az network public-ip show --resource-group myvm-resource-gp --name myBastionIP --query ipAddress --output tsv);
-echo "To connection to the Bastion us the IP address $bastionIP";
+echo "To connect to the Bastion use the IP address $bastionIP";
 

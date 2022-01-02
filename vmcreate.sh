@@ -5,17 +5,17 @@ usage() {
 cat << EOF  
 Usage: ./vmcreate -g myvm-resource-gp
 Install Pre-requisites for EspoCRM with docker in Development mode
--g|--resource-group				The azure resource group
+-g|--resource-group		The azure resource group
 OPTIONAL
--h|-help|--help					Display help
---vm-prefix						The VM name prefix used when each VM is created
-								e.g "vmName" becomes "vmName1", "vmName2", etc.
---nic-prefix						The NIC name prefix used for each VM NIC
-								e.g. "myNIC" becomes "myNIC1", "myNIC2", etc.
---vnet-name						The vnet-name
---subnet						The subnet
---nsg-name						The name of the NSG applied to each VM.
--c|vm-count						The number of VMs to create.
+-h|--help				Display help
+--vm-prefix				The VM name prefix used when each VM is created
+						e.g "vmName" becomes "vmName1", "vmName2", etc.
+--nic-prefix			The NIC name prefix used for each VM NIC
+						e.g. "myNIC" becomes "myNIC1", "myNIC2", etc.
+--vnet-name				The vnet-name
+--subnet				The subnet
+--nsg-name				The name of the NSG applied to each VM.
+-c|vm-count				The number of VMs to create.
 EOF
 # EOF is found above and hence cat command stops reading. This is equivalent to echo but much neater when printing out.
 }
