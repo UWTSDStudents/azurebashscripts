@@ -6,7 +6,7 @@ cat << EOF
 Usage: ./mkbastion.sh --resource-group mkvm-resource-gp --name myBastionHost
 		--vnet myVNet --subnet-prefix 10.1.1.0/24 --public-ip-name myBastionIP
 		--location ukwest 
-Install Pre-requisites for EspoCRM with docker in Development mode
+I
 -g|--resource-group		The azure resource group
 --vnet-name				The vNet to which the Bastion is to be connected.
 --subnet-prefix			The Bastion subnet IP prefix e.g. 10.0.0.1/24

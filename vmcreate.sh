@@ -4,7 +4,7 @@ usage() {
 # `cat << EOF` This means that cat should stop reading when EOF is detected
 cat << EOF  
 Usage: ./vmcreate -g myvm-resource-gp
-Install Pre-requisites for EspoCRM with docker in Development mode
+
 -g|--resource-group		The azure resource group
 OPTIONAL
 -h|--help				Display help
@@ -15,7 +15,9 @@ OPTIONAL
 --vnet-name				The vnet-name
 --subnet				The subnet
 --nsg-name				The name of the NSG applied to each VM.
--c|vm-count				The number of VMs to create.
+-p|--use-public-ip		Provide the VMs with public IP addresses. (False by default)
+-n|--use-nginx			Install Nginx using a VM extension. (False by default)
+-c|--vm-count			The number of VMs to create.
 EOF
 # EOF is found above and hence cat command stops reading. This is equivalent to echo but much neater when printing out.
 }
@@ -26,6 +28,8 @@ nicprefix="myNic";
 vnet="";
 subnet="myBackEndSubnet";
 nsgname="myNSG";
+usePublicIP=0;
+useNginx=0;
 vmcount=1;
 
 # $@ is all command line parameters passed to the script.
@@ -33,7 +37,7 @@ vmcount=1;
 # -l is for long options with double dash like --version
 # the comma separates different long options
 # -a is for long options with single dash like -version
-options=$(getopt -l "help,resource-group:,vm-prefix:,nic-prefix:,vnet:,subnet:,vm-count:,nsg-name:" -o "hg:c:" -a -- "$@")
+options=$(getopt -l "help,resource-group:,vm-prefix:,nic-prefix:,vnet:,subnet:,vm-count:,nsg-name:,use-public-ip,--use-nginx" -o "hg:c:pn" -a -- "$@")
 
 # set --:
 # If no arguments follow this option, then the positional parameters are unset. Otherwise, the positional parameters 
@@ -74,6 +78,12 @@ case $1 in
 --nsg-name)
 	shift;
     nsgname=$1
+    ;;
+-p|--use-public-ip)
+    usePublicIP=1
+    ;;
+-n|--use-nginx)
+    useNginx=1
     ;;
 -c|--vm-count)
 	shift;
@@ -117,8 +127,15 @@ do
 	az network nic create --resource-group $group --name $nic_name --vnet-name $vnet --subnet $subnet --network-security-group $nsgname;
 
 	echo "Creating VM $vm_name with NIC $nic_name";
-	az vm create --resource-group $group --name $vm_name --nics $nic_name --image UbuntuLTS --admin-username azureuser --generate-ssh-keys --no-wait;
-
-	echo "Creating VM Extension for VM $vm_name";
-	az vm extension set --resource-group $group --vm-name $vm_name --publisher Microsoft.Azure.Extensions --name CustomScript --version 2.0 --protected-settings '{"fileUris":["https://raw.githubusercontent.com/Azure-Samples/compute-automation-configurations/master/automate_nginx.sh"], "commandToExecute":"./automate_nginx.sh"}';
+	if[$usePublicIP=1]
+	then	
+		az vm create --resource-group $group --name $vm_name --nics $nic_name --image UbuntuLTS --admin-username azureuser --generate-ssh-keys --no-wait;
+	else
+		az vm create --resource-group $group --name $vm_name --nics $nic_name --image UbuntuLTS --admin-username azureuser --generate-ssh-keys --no-wait --public-ip-address "";	
+	fi
+	if[$useNginx=1]
+	then
+		echo "Creating Nginx VM Extension for VM $vm_name";
+		az vm extension set --resource-group $group --vm-name $vm_name --publisher Microsoft.Azure.Extensions --name CustomScript --version 2.0 --protected-settings '{"fileUris":["https://raw.githubusercontent.com/Azure-Samples/compute-automation-configurations/master/automate_nginx.sh"], "commandToExecute":"./automate_nginx.sh"}';
+	fi
 done
