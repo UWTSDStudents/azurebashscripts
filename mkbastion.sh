@@ -4,8 +4,7 @@ usage() {
 # `cat << EOF` This means that cat should stop reading when EOF is detected
 cat << EOF  
 Usage: ./mkbastion.sh --resource-group mkvm-resource-gp --name myBastionHost
-		--vnet myVNet --subnet-name azureBastionSubnet
-		--subnet-prefix 10.1.1.0/24 --public-ip-name myBastionIP
+		--vnet myVNet --subnet-prefix 10.1.1.0/24 --public-ip-name myBastionIP
 		--location ukwest 
 Install Pre-requisites for EspoCRM with docker in Development mode
 -g|--resource-group		The azure resource group
