@@ -16,7 +16,6 @@ OPTIONAL
 -h|--help				Display help
 -n|--name				The name of the bastion
 --public-ip-name		The name of the public IP address 
---subnet-name			The Bastion subnet name
 
 EOF
 # EOF is found above and hence cat command stops reading. This is equivalent to echo but much neater when printing out.
@@ -27,7 +26,6 @@ vnet="";
 location="";
 name="myBastionHost";
 publicIP="myBastionIP";
-subnet="azureBastionSubnet";
 subnetPrefix="";
 
 # $@ is all command line parameters passed to the script.
@@ -68,10 +66,6 @@ case $1 in
 --vnet)
 	shift;
     vnet=$1
-    ;;
---subnet)
-	shift;
-    subnet=$1
     ;;
 --subnet-prefix)
 	shift;
@@ -124,8 +118,8 @@ fi
 
 echo "Creating Public IP $publicIP";
 az network public-ip create --resource-group $group --name $publicIP --sku Standard
-echo "Creating subnet for Bastion $subnet with IP prefix $subnetPrefix";
-az network vnet subnet create --resource-group $group --name $subnet --vnet-name $vnet --address-prefixes $subnetPrefix
+echo "Creating AzureBastionSubnet subnet with IP prefix $subnetPrefix";
+az network vnet subnet create --resource-group $group --name AzureBastionSubnet --vnet-name $vnet --address-prefixes $subnetPrefix
 echo "Creating Bastion $name connecting to vNet $vnet in $location";
 az network bastion create --resource-group $group --name $name --public-ip-address $publicIP --vnet-name $vnet --location $location
 
