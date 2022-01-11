@@ -129,9 +129,9 @@ do
 	echo "Creating VM $vm_name with NIC $nic_name";
 	if [ $usePublicIP -eq 1 ]
 	then	
-		az vm create --resource-group $group --name $vm_name --nics $nic_name --image UbuntuLTS --admin-username azureuser --generate-ssh-keys --no-wait;
+		az vm create --resource-group $group --name $vm_name --nics $nic_name --image UbuntuLTS --admin-username azureuser --generate-ssh-keys;
 	else
-		az vm create --resource-group $group --name $vm_name --nics $nic_name --image UbuntuLTS --admin-username azureuser --generate-ssh-keys --no-wait --public-ip-address "";	
+		az vm create --resource-group $group --name $vm_name --nics $nic_name --image UbuntuLTS --admin-username azureuser --generate-ssh-keys --public-ip-address "";	
 	fi
 	if [ $useNginx -eq 1 ]
 	then
