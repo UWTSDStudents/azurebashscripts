@@ -127,13 +127,13 @@ do
 	az network nic create --resource-group $group --name $nic_name --vnet-name $vnet --subnet $subnet --network-security-group $nsgname;
 
 	echo "Creating VM $vm_name with NIC $nic_name";
-	if[$usePublicIP=1]
+	if [ $usePublicIP -eq 1 ]
 	then	
 		az vm create --resource-group $group --name $vm_name --nics $nic_name --image UbuntuLTS --admin-username azureuser --generate-ssh-keys --no-wait;
 	else
 		az vm create --resource-group $group --name $vm_name --nics $nic_name --image UbuntuLTS --admin-username azureuser --generate-ssh-keys --no-wait --public-ip-address "";	
 	fi
-	if[$useNginx=1]
+	if [ $useNginx -eq 1 ]
 	then
 		echo "Creating Nginx VM Extension for VM $vm_name";
 		az vm extension set --resource-group $group --vm-name $vm_name --publisher Microsoft.Azure.Extensions --name CustomScript --version 2.0 --protected-settings '{"fileUris":["https://raw.githubusercontent.com/Azure-Samples/compute-automation-configurations/master/automate_nginx.sh"], "commandToExecute":"./automate_nginx.sh"}';
