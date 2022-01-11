@@ -37,7 +37,7 @@ vmcount=1;
 # -l is for long options with double dash like --version
 # the comma separates different long options
 # -a is for long options with single dash like -version
-options=$(getopt -l "help,resource-group:,vm-prefix:,nic-prefix:,vnet:,subnet:,vm-count:,nsg-name:,use-public-ip,--use-nginx" -o "hg:c:pn" -a -- "$@")
+options=$(getopt -l "help,resource-group:,vm-prefix:,nic-prefix:,vnet:,subnet:,vm-count:,nsg-name:,use-public-ip,use-nginx" -o "hg:c:pn" -a -- "$@")
 
 # set --:
 # If no arguments follow this option, then the positional parameters are unset. Otherwise, the positional parameters 
