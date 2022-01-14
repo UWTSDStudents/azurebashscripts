@@ -15,7 +15,7 @@ OPTIONAL
 -h|--help				Display help
 -n|--name				The name of the bastion
 --public-ip-name		The name of the public IP address 
-
+--public-ip-static      Make public IP static (default is dynamic)
 EOF
 # EOF is found above and hence cat command stops reading. This is equivalent to echo but much neater when printing out.
 }
@@ -25,6 +25,7 @@ vnet="";
 location="";
 name="myBastionHost";
 publicIP="myBastionIP";
+publicIPStatic=0;
 subnetPrefix="";
 
 # $@ is all command line parameters passed to the script.
@@ -32,7 +33,7 @@ subnetPrefix="";
 # -l is for long options with double dash like --version
 # the comma separates different long options
 # -a is for long options with single dash like -version
-options=$(getopt -l "help,resource-group:,public-ip-name:,name:,vnet:,subnet-name:,subnet-prefix:,location:" -o "hg:n:l:" -a -- "$@")
+options=$(getopt -l "help,resource-group:,public-ip-name:,name:,vnet:,subnet-name:,subnet-prefix:,location:,public-ip-static" -o "hg:n:l:" -a -- "$@")
 
 # set --:
 # If no arguments follow this option, then the positional parameters are unset. Otherwise, the positional parameters 
@@ -58,6 +59,9 @@ case $1 in
 	shift;
     publicIP=$1
     ;;
+--public-ip-static)
+	publicIPStatic=1
+	;;
 -n|--name)
 	shift;
     name=$1
@@ -116,7 +120,12 @@ then
 fi
 
 echo "Creating Public IP $publicIP";
-az network public-ip create --resource-group $group --name $publicIP --sku Standard
+if [ $publicIPStatic -eq 1 ]
+then	
+	az network public-ip create --resource-group $group --name $publicIP --sku Standard --allocation static
+else
+	az network public-ip create --resource-group $group --name $publicIP --sku Standard
+fi
 echo "Creating AzureBastionSubnet subnet with IP prefix $subnetPrefix";
 az network vnet subnet create --resource-group $group --name AzureBastionSubnet --vnet-name $vnet --address-prefixes $subnetPrefix
 echo "Creating Bastion $name connecting to vNet $vnet in $location";
