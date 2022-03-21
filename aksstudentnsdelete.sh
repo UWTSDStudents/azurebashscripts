@@ -30,25 +30,19 @@ do
    i=$(($i+1))
 done
 
-# Get a list of all the existing namespace names
+# Get a list of all the created namespace names
 ns=$(kubectl get ns -o name)
 declare -a ns=($(echo $ns| tr " " " "))
 
 i=0
 for user in "${users[@]}"
 do
-	#nstest=$(kubectl describe namespace ${users_ns[$i]})
-	#if [ -z "$nstest" ]
-	if [[ ! ${ns[*]} =~ "namespace/${users_ns[$i]}" ]]
+	if [[ ${ns[*]} =~ "namespace/${users_ns[$i]}" ]]
 	then 
-		echo "Creating namespace ${users_ns[$i]} assigned to ${user}"
-		kubectl create namespace ${users_ns[$i]}
-		az role assignment create --role "Azure Kubernetes Service RBAC Writer" --assignee $user --scope "$AKS_ID/namespaces/${users_ns[$i]}"
+		echo "Deleting namespace ${users_ns[$i]} assigned to ${user}"
+		kubectl delete namespace ${users_ns[$i]}
 	else 
-		# Find index of first # marking end of the username
-		s=`expr index $users[$i] "#*"`
-		s=$(($s-1))
-		echo "Not creating namespace for ${users[0]::s}. Namespace ${users_ns[$i]} already exists"; 
+		echo "Namespace ${users_ns[$i]} does not exist"; 
 	fi
 	
 	i=$(($i+1))
